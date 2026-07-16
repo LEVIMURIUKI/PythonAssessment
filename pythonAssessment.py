@@ -6,7 +6,7 @@ def count_specific_word(text, search_word):
     Counts the number of occurrences of a specified word in the text.
     Returns 0 if no matches are found.
     """
-    words = re.findall(r'\b\w+\b', text.lower())
+    words = re.findall(r"\b\w+\b", text.lower())
     return words.count(search_word.lower())
 
 
@@ -15,10 +15,10 @@ def identify_most_common_word(text):
     Returns the most common word in the text.
     Returns None if the text is empty.
     """
-    if text.strip() == "":
-        return None
+    words = re.findall(r"\b\w+\b", text.lower())
 
-    words = re.findall(r'\b\w+\b', text.lower())
+    if not words:
+        return None
 
     frequency = {}
 
@@ -35,12 +35,12 @@ def calculate_average_word_length(text):
     """
     Calculates the average word length.
     Excludes punctuation.
-    Returns 0 if the text is empty.
+    Returns 0 if the text contains no words.
     """
-    if text.strip() == "":
-        return 0
+    words = re.findall(r"\b\w+\b", text)
 
-    words = re.findall(r'\b\w+\b', text)
+    if not words:
+        return 0
 
     total_length = 0
 
@@ -53,40 +53,35 @@ def calculate_average_word_length(text):
 def count_paragraphs(text):
     """
     Counts paragraphs separated by blank lines.
-    Returns 1 if the text is empty.
+    Returns 0 if the text is empty.
     """
     if text.strip() == "":
-        return 1
+        return 0
 
-    paragraphs = [p for p in text.split("\n\n") if p.strip() != ""]
-
+    paragraphs = [p for p in text.split("\n\n") if p.strip()]
     return len(paragraphs)
 
 
 def count_sentences(text):
     """
-    Counts sentences ending in ., ! or ?
-    Returns 1 if the text is empty.
+    Counts sentences ending with '.', '!' or '?'.
+    Returns 0 if the text is empty.
     """
     if text.strip() == "":
-        return 1
+        return 0
 
-    sentences = re.findall(r'[.!?]+', text)
-
-    return len(sentences)
+    return len(re.findall(r"[.!?]+", text))
 
 
-if __name__ == "__main__":
-
+def main():
     try:
         with open("newsArticle.txt", "r", encoding="utf-8") as file:
             article = file.read()
     except FileNotFoundError:
         print("Error: newsArticle.txt was not found.")
-        article = ""
+        return
 
     while True:
-
         search_word = input("Enter a word to search for: ").strip()
 
         if search_word == "":
@@ -94,19 +89,18 @@ if __name__ == "__main__":
             continue
 
         print("\n===== Text Analysis Results =====")
-        print(f"Occurrences of '{search_word}':",
-              count_specific_word(article, search_word))
-        print("Most common word:",
-              identify_most_common_word(article))
-        print("Average word length:",
-              round(calculate_average_word_length(article), 2))
-        print("Number of paragraphs:",
-              count_paragraphs(article))
-        print("Number of sentences:",
-              count_sentences(article))
+        print(f"Occurrences of '{search_word}': {count_specific_word(article, search_word)}")
+        print(f"Most common word: {identify_most_common_word(article)}")
+        print(f"Average word length: {calculate_average_word_length(article):.2f}")
+        print(f"Number of paragraphs: {count_paragraphs(article)}")
+        print(f"Number of sentences: {count_sentences(article)}")
 
-        choice = input("\nWould you like to search another word? (y/n): ").lower()
+        choice = input("\nWould you like to search another word? (y/n): ").strip().lower()
 
         if choice != "y":
             print("\nThank you for using the Text Analysis Program.")
             break
+
+
+if __name__ == "__main__":
+    main()
